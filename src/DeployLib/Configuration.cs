@@ -8,20 +8,32 @@ namespace DeployLib
 {
     public class Configuration
     {
-        public Configuration(uint sessionId, DateTime start, int duration, int rate, int range)
+        public Configuration(uint sessionId, DateTime start, int duration, int rate, int range, int gyro)
         {
             this.SessionId = sessionId;
             this.Start = start;
-            this.Duration = duration; // 24 * 7 * 60 * 60;  // 604800
+            this.Duration = duration;
             this.Rate = rate;
             this.Range = range;
+            this.Gyro = gyro;
         }
 
-        public Configuration() : this(0, DateTime.MinValue, 24 * 7 * 60 * 60, 100, 8) { }
+        // Default recording settings, used for every new configuration.
+        // Set once at startup from config.ini (see MainForm).
+        // Patient barcodes (P...) always use these values; only legacy codes in test mode can override them.
+        public static int DefaultRate { get; set; } = 100;           // Hz
+        public static int DefaultRange { get; set; } = 8;            // +/- g
+        public static int DefaultGyro { get; set; } = 0;             // degrees/second, 0 = disabled
+        public static int DefaultDurationHours { get; set; } = 24 * 7;
+
+        public Configuration() : this(0, DateTime.MinValue, DefaultDurationHours * 60 * 60, DefaultRate, DefaultRange, DefaultGyro) { }
 
         public int Rate { get; set; }
 
         public int Range { get; set; }
+
+        // Gyro range in degrees/second (125, 250, 500, 1000, 2000), 0 = disabled (AX6 only)
+        public int Gyro { get; set; }
 
         public int Duration { get; set; }
 
@@ -54,6 +66,8 @@ namespace DeployLib
                 if (!ValidRates.Contains(Rate)) { return false; }
                 int[] ValidRanges = { 16, 8, 4, 2 };
                 if (!ValidRanges.Contains(Range)) { return false; }
+                int[] ValidGyros = { 0, 125, 250, 500, 1000, 2000 };
+                if (!ValidGyros.Contains(Gyro)) { return false; }
                 return true;
             }
         }
@@ -77,7 +91,7 @@ namespace DeployLib
 
         public override string ToString()
         {
-            return "CONFIG #" + SessionId + " " + Start.ToString("yyyy-MM-dd HH\\:mm\\:ss") + " to " + End.ToString("yyyy-MM-dd HH\\:mm\\:ss") + " (" + (Duration / 60 / 60) + " hours) @" + Rate + "Hz +/-" + Range + "g";
+            return "CONFIG #" + SessionId + " " + Start.ToString("yyyy-MM-dd HH\\:mm\\:ss") + " to " + End.ToString("yyyy-MM-dd HH\\:mm\\:ss") + " (" + (Duration / 60 / 60) + " hours) @" + Rate + "Hz +/-" + Range + "g" + (Gyro > 0 ? " gyro " + Gyro + "dps" : "");
         }
     }
 }

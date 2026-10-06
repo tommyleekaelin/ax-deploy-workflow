@@ -411,7 +411,9 @@ thread.IsBackground = true; // should probably be foreground threads
                                 res = OmApi.OmSetDelays(this.Id, OmApi.OmDateTimePack(command.Configuration.Start), OmApi.OmDateTimePack(command.Configuration.End));
                                 if (OmApi.OM_FAILED(res)) { Console.WriteLine("COMMS: " + this.Id + " Set delays"); CommsError = true; IsConfiguring = false; break; }
 
-                                res = OmApi.OmSetAccelConfig(this.Id, command.Configuration.Rate, command.Configuration.Range);
+                                // Pack gyro range into the upper 16 bits of the range parameter (supported since OMAPI 1.8)
+                                int rangeWithGyro = command.Configuration.Range | (command.Configuration.Gyro << 16);
+                                res = OmApi.OmSetAccelConfig(this.Id, command.Configuration.Rate, rangeWithGyro);
                                 if (OmApi.OM_FAILED(res)) { Console.WriteLine("COMMS: " + this.Id + " Set accel config"); CommsError = true; IsConfiguring = false; break; }
 
                                 res = OmApi.OmEraseDataAndCommit(this.Id, OmApi.OM_ERASE_LEVEL.OM_ERASE_QUICKFORMAT);

@@ -52,6 +52,10 @@ namespace Deploy
         private long lastInput = 0;
         private bool inputFinished = true;
         public string lastInputString = null;
+
+        // When false, only patient barcodes (P...) are accepted; legacy configuration codes are rejected.
+        public bool TestMode { get; set; } = false;
+
         public void ForgetLastInput() { lastInputString = null; }
 
         private DateTime? ParseDateTime(string value)
@@ -302,6 +306,22 @@ namespace Deploy
             textBoxConfigurationString.SelectionStart = textBoxConfigurationString.Text.Length;
         }
 
+        // Patient barcode "P<number>", e.g. P100042:
+        // patient number from the barcode, start = now, all other settings from config.ini (cannot be overridden)
+        public Configuration ParsePatient(string value)
+        {
+            string number = value.Substring(1);   // remove the leading "p"
+            if (number.Length < 1 || number.Length > 9 || !IsNumeric(number))
+            {
+                Console.WriteLine("ERROR: Invalid patient number: " + number);
+                return null;
+            }
+            Configuration configuration = new Configuration();   // defaults from config.ini
+            configuration.SessionId = uint.Parse(number);
+            configuration.Start = DateTime.Now;
+            return configuration;
+        }
+
         public void Submit(string newString = null)
         {
             if (newString != null)
@@ -309,21 +329,47 @@ namespace Deploy
                 textBoxConfigurationString.Text = newString;
             }
 
-            if (textBoxConfigurationString.Text.Length > 0)
+            string input = textBoxConfigurationString.Text.Trim().ToLower();
+
+            if (input.Length > 0)
             {
-                if (textBoxConfigurationString.Text.Length == 5 && IsNumeric(textBoxConfigurationString.Text))
+                if (input.StartsWith("p"))
                 {
-                    // A strictly numeric five digits is interpreted as a device barcode
-                    int deviceId = int.Parse(textBoxConfigurationString.Text);
-                    // Use device barcode
-                    Console.WriteLine("DEVICE: #" + deviceId);
-                    SetMessage("DEVICE: #" + deviceId);
-                    // Raise event
-                    DeviceScanned?.Invoke(this, new ScanEventArgs(deviceId));
+                    // Patient barcode
+                    Configuration configuration = ParsePatient(input);
+                    if (configuration == null)
+                    {
+                        SetMessage("ERROR: Invalid patient barcode.", MessageType.MESSAGE_TYPE_ERROR);
+                    }
+                    else if (!configuration.Valid)
+                    {
+                        Console.WriteLine("ERROR: Invalid configuration (check recording settings in config.ini): " + configuration.ToString());
+                        SetMessage("ERROR: Invalid recording settings in config.ini.", MessageType.MESSAGE_TYPE_ERROR);
+                    }
+                    else
+                    {
+                        // Same patient may be scanned several times in a row (several devices per patient)
+                        lastInputString = null;
+                        Console.WriteLine("PATIENT: " + configuration.ToString());
+                        ConfigurationScanned?.Invoke(this, new ScanEventArgs(configuration));
+                    }
                 }
-                else // ...anything else is parsed as a configuration string.
+                else if (IsNumeric(input) && int.TryParse(input, out int scannedId))
                 {
-                    Configuration configuration = ParseConfig(textBoxConfigurationString.Text);
+                    // A purely numeric barcode is a device ID, any length (AX3: 5 digits, AX6: 7 digits)
+                    Console.WriteLine("DEVICE: #" + scannedId);
+                    SetMessage("DEVICE: #" + scannedId);
+                    DeviceScanned?.Invoke(this, new ScanEventArgs(scannedId));
+                }
+                else if (!TestMode)
+                {
+                    // Legacy configuration codes are only allowed in test mode
+                    Console.WriteLine("ERROR: Unknown barcode (legacy codes require testmode=true): " + input);
+                    SetMessage("ERROR: Unknown barcode. Please scan a patient barcode (P...).", MessageType.MESSAGE_TYPE_ERROR);
+                }
+                else // Test mode: legacy configuration string, unchanged from the original
+                {
+                    Configuration configuration = ParseConfig(input);
                     if (configuration == null)
                     {
                         Console.WriteLine("ERROR: Configuration string could not be parsed.");
@@ -344,22 +390,16 @@ namespace Deploy
                         Console.WriteLine("ERROR: Configuration too far in the future.");
                         SetMessage("ERROR: Configuration too far in the future.", MessageType.MESSAGE_TYPE_ERROR);
                     }
+                    else if (lastInputString != null && lastInputString == input)
+                    {
+                        Console.WriteLine("ERROR: Duplicate successive input: " + input);
+                        SetMessage("ERROR: Duplicated configuration detected and ignored (F8 to override).", MessageType.MESSAGE_TYPE_ERROR);
+                    }
                     else
                     {
-                        if (lastInputString != null && lastInputString == textBoxConfigurationString.Text)
-                        {
-                            Console.WriteLine("ERROR: Duplicate successive input: " + textBoxConfigurationString.Text);
-                            SetMessage("ERROR: Duplicated configuration detected and ignored (F8 to override).", MessageType.MESSAGE_TYPE_ERROR);
-                        }
-                        else
-                        {
-                            lastInputString = textBoxConfigurationString.Text;
-                            // Use configuration
-                            Console.WriteLine("CONFIGURATION: " + configuration.ToString());
-                            // SetMessage("CONFIGURING: " + warning + configuration.ToString());
-                            // Raise event
-                            ConfigurationScanned?.Invoke(this, new ScanEventArgs(configuration));
-                        }
+                        lastInputString = input;
+                        Console.WriteLine("CONFIGURATION (test mode): " + configuration.ToString());
+                        ConfigurationScanned?.Invoke(this, new ScanEventArgs(configuration));
                     }
                 }
             }

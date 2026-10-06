@@ -181,10 +181,24 @@ namespace Deploy
             DeleteAfterSync = deleteAfterSync;
             Console.WriteLine($"DeleteAfterSync={deleteAfterSync}");
 
-            // batteryChargedLevel
-            if (configuration.TryGetValue("batteryChargedLevel", out string batteryChargedLevelString)) { int.TryParse(batteryChargedLevelString, out batteryChargedLevel); }
+            // Minimum battery level before a device counts as charged
+            // (keys are lower-cased when reading config.ini, so the key must be lower-case here too)
+            if (configuration.TryGetValue("battery", out string batteryChargedLevelString)) { int.TryParse(batteryChargedLevelString, out batteryChargedLevel); }
             BatteryChargedLevel = batteryChargedLevel;
             Console.WriteLine($"BatteryChargedLevel={batteryChargedLevel}");
+
+            // Recording settings, used as defaults for every configured device
+            if (configuration.TryGetValue("rate", out string rateString) && int.TryParse(rateString, out int rate)) { Configuration.DefaultRate = rate; }
+            if (configuration.TryGetValue("range", out string rangeString) && int.TryParse(rangeString, out int range)) { Configuration.DefaultRange = range; }
+            if (configuration.TryGetValue("gyro", out string gyroString) && int.TryParse(gyroString, out int gyro)) { Configuration.DefaultGyro = gyro; }
+            if (configuration.TryGetValue("duration", out string durationString) && int.TryParse(durationString, out int duration)) { Configuration.DefaultDurationHours = duration; }
+            Console.WriteLine($"Recording defaults: rate={Configuration.DefaultRate}Hz range=+/-{Configuration.DefaultRange}g gyro={Configuration.DefaultGyro}dps duration={Configuration.DefaultDurationHours}h");
+
+            // Test mode: also accept legacy configuration codes (e.g. 100042b26100609d1)
+            bool testMode = false;
+            if (configuration.TryGetValue("testmode", out string testModeString)) { bool.TryParse(testModeString, out testMode); }
+            configureControl.TestMode = testMode;
+            Console.WriteLine($"TestMode={testMode}");
 
             // Can't directly set non-public double-buffer flag
             // listViewDevices.DoubleBuffered = true;
@@ -326,6 +340,15 @@ namespace Deploy
         bool configuredDeviceRemoved = false;
         Configuration awaitingConfiguration = null;
 
+
+        // Device selected by scanning its barcode (before the patient barcode), -1 = none
+        int selectedDeviceId = -1;
+        DateTime selectedAt = DateTime.MinValue;
+        const int SELECTION_TIMEOUT_SECONDS = 60;
+
+        // Device that the waiting configuration belongs to, -1 = none
+        int awaitingDeviceId = -1;
+
         public void UpdateDeviceListItem(Device device, bool remove = false)
         {
             string key = device.Id.ToString();
@@ -370,7 +393,12 @@ namespace Deploy
                 {
                     configureControl.SetMessage("WARNING: Removed device #" + device.Id + " while not fully charged (" + device.Battery + "%).", ConfigureControl.MessageType.MESSAGE_TYPE_ERROR);
                 }
-
+                if (device.Id == selectedDeviceId)
+                {
+                    Console.WriteLine("SELECT: Selected device #" + device.Id + " was removed.");
+                    selectedDeviceId = -1;
+                    configureControl.SetMessage("Selected device #" + device.Id + " was removed. Please scan a device again.", ConfigureControl.MessageType.MESSAGE_TYPE_INFO);
+                }
                 if (previousState.ContainsKey(device.Id))
                 {
                     previousState.Remove(device.Id);
@@ -496,6 +524,7 @@ namespace Deploy
                     }
 
                     awaitingConfiguration = null;
+                    awaitingDeviceId = -1;
                 }
             }
 
@@ -634,9 +663,11 @@ namespace Deploy
             if (ConfigString != null) return;
             bool handled = false;
             // Cancel waiting for configuration
-            if (e.KeyChar == 27 && awaitingConfiguration != null)
+            if (e.KeyChar == 27 && (awaitingConfiguration != null || selectedDeviceId >= 0))
             {
                 awaitingConfiguration = null;
+                awaitingDeviceId = -1;
+                selectedDeviceId = -1;
                 configureControl.SetMessage(null);
             }
             handled |= (e.KeyChar >= 'A' && e.KeyChar <= 'Z');
@@ -688,14 +719,21 @@ namespace Deploy
                 {
                     string configMessage = ((awaitingConfiguration.Within == 0) ? "[WARNING: Already after start] " : "") + awaitingConfiguration.ToString();
                     Device deviceToConfigure = FindDeviceToConfigure();
-                    if (HaveDevice(Device.DeviceState.STATE_CONFIGURING))
+                    if (GetConnectedDevice(awaitingDeviceId) == null)
+                    {
+                        // Selected device was removed before it could be configured
+                        Console.WriteLine("ERROR: Device #" + awaitingDeviceId + " was removed before configuration.");
+                        configureControl.SetMessage("ERROR: Device #" + awaitingDeviceId + " was removed before it was configured. Please start again.", ConfigureControl.MessageType.MESSAGE_TYPE_ERROR);
+                        awaitingConfiguration = null;
+                        awaitingDeviceId = -1;
+                    }
+                    else if (HaveDevice(Device.DeviceState.STATE_CONFIGURING))
                     {
                         // (still configuring)
-                        //configureControl.SetMessage("Configuring: " + configMessage, ConfigureControl.MessageType.MESSAGE_TYPE_INFO);
                     }
                     else if (deviceToConfigure == null)
                     {
-                        configureControl.SetMessage("Waiting for a charged, clear device. " + configMessage, ConfigureControl.MessageType.MESSAGE_TYPE_INFO);
+                        configureControl.SetMessage("Waiting for device #" + awaitingDeviceId + " to be ready. " + configMessage, ConfigureControl.MessageType.MESSAGE_TYPE_INFO);
                     }
                     else
                     {
@@ -729,21 +767,13 @@ namespace Deploy
 
         protected Device FindDeviceToConfigure()
         {
-            Device bestDevice = null;
-            lock (deployer.Devices)
+            // Only the device selected by scanning its barcode may be configured
+            Device device = GetConnectedDevice(awaitingDeviceId);
+            if (device != null && device.State == Device.DeviceState.STATE_CHARGED)
             {
-                foreach (Device device in deployer.Devices.Values)
-                {
-                    if (device.State == Device.DeviceState.STATE_CHARGED)
-                    {
-                        if (bestDevice == null || device.Battery > bestDevice.Battery)
-                        {
-                            bestDevice = device;
-                        }
-                    }
-                }
+                return device;
             }
-            return bestDevice;
+            return null;
         }
 
         private void configureControl_ConfigurationScanned(object sender, ConfigureControl.ScanEventArgs e)
@@ -763,10 +793,68 @@ namespace Deploy
                     configureControl.SetMessage("Not expecting a new configuration, was expecting removal of the last-configured device #" + lastDeviceConfigured + ".", ConfigureControl.MessageType.MESSAGE_TYPE_ERROR);
                 }
             }
+            else if (selectedDeviceId < 0)
+            {
+                configureControl.SetMessage("ERROR: Please scan the device barcode first, then the patient barcode.", ConfigureControl.MessageType.MESSAGE_TYPE_ERROR);
+            }
+            else if ((DateTime.Now - selectedAt).TotalSeconds > SELECTION_TIMEOUT_SECONDS)
+            {
+                Console.WriteLine("SELECT: Selection of device #" + selectedDeviceId + " expired.");
+                selectedDeviceId = -1;
+                configureControl.SetMessage("ERROR: Device selection expired. Please scan the device barcode again.", ConfigureControl.MessageType.MESSAGE_TYPE_ERROR);
+            }
             else
             {
+                Console.WriteLine("SELECT: Configuring device #" + selectedDeviceId + " for " + e.Configuration.ToString());
                 lastDeviceConfigured = -1;  // clear flag of last device configured
                 awaitingConfiguration = e.Configuration;
+                awaitingDeviceId = selectedDeviceId;
+                selectedDeviceId = -1;
+            }
+        }
+
+        // Returns the connected device with this ID, or null if it is not connected
+        protected Device GetConnectedDevice(int deviceId)
+        {
+            lock (deployer.Devices)
+            {
+                return deployer.Devices.TryGetValue(deviceId, out Device device) ? device : null;
+            }
+        }
+
+        // Select the device to be configured with the next patient barcode
+        protected void SelectDevice(int deviceId)
+        {
+            Device device = GetConnectedDevice(deviceId);
+            if (awaitingConfiguration != null)
+            {
+                configureControl.SetMessage("Still configuring the previous device, please wait.", ConfigureControl.MessageType.MESSAGE_TYPE_ERROR);
+            }
+            else if (device == null)
+            {
+                selectedDeviceId = -1;
+                configureControl.SetMessage("ERROR: Device #" + deviceId + " is not connected.", ConfigureControl.MessageType.MESSAGE_TYPE_ERROR);
+            }
+            else if (device.State != Device.DeviceState.STATE_CHARGED)
+            {
+                selectedDeviceId = -1;
+                configureControl.SetMessage("ERROR: Device #" + deviceId + " is not ready (" + stateGroups[device.State].Label + "). Wait until it is charged.", ConfigureControl.MessageType.MESSAGE_TYPE_ERROR);
+            }
+            else
+            {
+                selectedDeviceId = deviceId;
+                selectedAt = DateTime.Now;
+                Console.WriteLine("SELECT: Device #" + deviceId + " selected for configuration.");
+                configureControl.SetMessage("Device #" + deviceId + " selected -- now scan the patient barcode.", ConfigureControl.MessageType.MESSAGE_TYPE_SUCCESS);
+
+                // Highlight the device in the list
+                string key = deviceId.ToString();
+                if (listViewDevices.Items.ContainsKey(key))
+                {
+                    listViewDevices.SelectedItems.Clear();
+                    listViewDevices.Items[key].Selected = true;
+                    listViewDevices.Items[key].EnsureVisible();
+                }
             }
         }
 
@@ -774,7 +862,8 @@ namespace Deploy
         {
             if (lastDeviceConfigured < 0)
             {
-                configureControl.SetMessage("Not expecting a device to be scanned (scanned #" + e.DeviceId + ").", ConfigureControl.MessageType.MESSAGE_TYPE_ERROR);
+                // No configured device waiting for the dispatch check: this scan selects the next device
+                SelectDevice(e.DeviceId);
             }
             else if (e.DeviceId == lastDeviceConfigured && !configuredDeviceRemoved)
             {
@@ -1078,6 +1167,8 @@ namespace Deploy
             {
                 lastDeviceConfigured = -1;
                 awaitingConfiguration = null;
+                awaitingDeviceId = -1;
+                selectedDeviceId = -1;
                 configuredDeviceRemoved = true;
                 configureControl.ForgetLastInput();
                 configureControl.SetMessage($"Waiting status reset.", ConfigureControl.MessageType.MESSAGE_TYPE_INFO);
