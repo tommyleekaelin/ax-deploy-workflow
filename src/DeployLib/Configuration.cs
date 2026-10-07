@@ -26,6 +26,13 @@ namespace DeployLib
         public static int DefaultGyro { get; set; } = 0;             // degrees/second, 0 = disabled
         public static int DefaultDurationHours { get; set; } = 24 * 7;
 
+
+        // Allowed values, shared by ax-deploy (validation) and ConfigEditor (selection lists)
+        // AX6: 12.5-1600 Hz (12 = 12.5 Hz)
+        public static readonly int[] ValidRates = { 12, 25, 50, 100, 200, 400, 800, 1600 };
+        public static readonly int[] ValidRanges = { 2, 4, 8, 16 };
+        public static readonly int[] ValidGyros = { 0, 125, 250, 500, 1000, 2000 };
+
         public Configuration() : this(0, DateTime.MinValue, DefaultDurationHours * 60 * 60, DefaultRate, DefaultRange, DefaultGyro) { }
 
         public int Rate { get; set; }
@@ -62,11 +69,8 @@ namespace DeployLib
                 if (Duration <= 0) { return false; }
                 if (Start.Year < 2000) { return false; }
                 if (End <= Start) { return false; }
-                int[] ValidRates = { 6, 12, 25, 50, 100, 200, 400, 800, 1600, 3200 };
                 if (!ValidRates.Contains(Rate)) { return false; }
-                int[] ValidRanges = { 16, 8, 4, 2 };
                 if (!ValidRanges.Contains(Range)) { return false; }
-                int[] ValidGyros = { 0, 125, 250, 500, 1000, 2000 };
                 if (!ValidGyros.Contains(Gyro)) { return false; }
                 return true;
             }

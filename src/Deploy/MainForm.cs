@@ -209,6 +209,11 @@ namespace Deploy
             if (configuration.TryGetValue("duration", out string durationString) && int.TryParse(durationString, out int duration)) { Configuration.DefaultDurationHours = duration; }
             Console.WriteLine($"Recording defaults: rate={Configuration.DefaultRate}Hz range=+/-{Configuration.DefaultRange}g gyro={Configuration.DefaultGyro}dps duration={Configuration.DefaultDurationHours}h");
 
+            // Show the recording settings in the window title, so staff always sees them
+            string gyroText = Configuration.DefaultGyro > 0 ? $"gyro {Configuration.DefaultGyro} dps" : "gyro off";
+            string durationText = Configuration.DefaultDurationHours % 24 == 0 ? $"{Configuration.DefaultDurationHours / 24} days" : $"{Configuration.DefaultDurationHours} hours";
+            this.Text = this.Text + $"  |  {Configuration.DefaultRate} Hz, +/-{Configuration.DefaultRange} g, {gyroText}, {durationText}";
+
             // Test mode: also accept legacy configuration codes (e.g. 100042b26100609d1)
             bool testMode = false;
             if (configuration.TryGetValue("testmode", out string testModeString)) { bool.TryParse(testModeString, out testMode); }

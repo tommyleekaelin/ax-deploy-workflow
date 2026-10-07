@@ -1,0 +1,15 @@
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\bin\Debug\OmApiNet.dll
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\bin\Debug\ConfigEditor.exe.config
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\bin\Debug\ConfigEditor.exe
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\bin\Debug\ConfigEditor.pdb
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\bin\Debug\DeployLib.dll
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\bin\Debug\DeployLib.pdb
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\obj\Debug\ConfigEditor.csproj.AssemblyReference.cache
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\obj\Debug\ConfigEditor.Properties.Resources.resources
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\obj\Debug\ConfigEditor.csproj.GenerateResource.cache
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\obj\Debug\ConfigEditor.csproj.CoreCompileInputs.cache
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\obj\Debug\ConfigEd.2ECFB116.Up2Date
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\obj\Debug\ConfigEditor.exe
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\obj\Debug\ConfigEditor.pdb
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\obj\Debug\ConfigEditor.exe.config
+C:\Users\kaey\work\D-BOOST2\ax-deploy-workflow\src\ConfigEditor\obj\Debug\ConfigEditor.ConfigForm.resources

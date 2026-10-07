@@ -456,8 +456,7 @@
             // resetDevicesWithCommsErrorsToolStripMenuItem
             // 
             this.resetDevicesWithCommsErrorsToolStripMenuItem.Name = "resetDevicesWithCommsErrorsToolStripMenuItem";
-            // this.resetDevicesWithCommsErrorsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F9;
-            this.resetDevicesWithCommsErrorsToolStripMenuItem.Size = new System.Drawing.Size(270, 22);
+            this.resetDevicesWithCommsErrorsToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.resetDevicesWithCommsErrorsToolStripMenuItem.Text = "&Reset Devices With Comms Errors";
             this.resetDevicesWithCommsErrorsToolStripMenuItem.Click += new System.EventHandler(this.resetDevicesWithCommsErrorsToolStripMenuItem_Click);
             // 
@@ -465,19 +464,19 @@
             // 
             this.advancedIgnoreConfigurationToolStripMenuItem.Name = "advancedIgnoreConfigurationToolStripMenuItem";
             this.advancedIgnoreConfigurationToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8;
-            this.advancedIgnoreConfigurationToolStripMenuItem.Size = new System.Drawing.Size(270, 22);
+            this.advancedIgnoreConfigurationToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.advancedIgnoreConfigurationToolStripMenuItem.Text = "Clear Pending Configuration...";
             this.advancedIgnoreConfigurationToolStripMenuItem.Click += new System.EventHandler(this.advancedIgnoreConfigurationToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(267, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(250, 6);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(270, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.optionsToolStripMenuItem.Text = "&Options...";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
