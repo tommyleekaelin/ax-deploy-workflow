@@ -342,6 +342,10 @@ thread.IsBackground = true; // should probably be foreground threads
                                 // Flag as error
                                 Console.WriteLine("COMMS: Device reset " + this.Id + "");
                                 this.CommsError = true;
+                                // Release any open download before resetting; otherwise Windows may keep
+                                // the old volume in use after the device reboots (Device Manager: Code 38)
+                                OmApi.OmCancelDownload(this.Id);
+                                Thread.Sleep(1000);
                                 OmApi.OmCommand((int)this.Id, "\r\nreset\r\n", (StringBuilder)null, 0, "RESET", (uint)500, IntPtr.Zero, 0);
                                 break;
                             }

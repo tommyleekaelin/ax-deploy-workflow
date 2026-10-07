@@ -260,6 +260,7 @@
             this.configureControl.Name = "configureControl";
             this.configureControl.Size = new System.Drawing.Size(770, 142);
             this.configureControl.TabIndex = 3;
+            this.configureControl.TestMode = false;
             this.configureControl.ConfigurationScanned += new Deploy.ConfigureControl.ScanEventHandler(this.configureControl_ConfigurationScanned);
             this.configureControl.DeviceScanned += new Deploy.ConfigureControl.ScanEventHandler(this.configureControl_DeviceScanned);
             // 
@@ -274,7 +275,7 @@
             this.textBoxLog.Name = "textBoxLog";
             this.textBoxLog.ReadOnly = true;
             this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxLog.Size = new System.Drawing.Size(56, 19);
+            this.textBoxLog.Size = new System.Drawing.Size(150, 46);
             this.textBoxLog.TabIndex = 0;
             // 
             // menuStrip
@@ -455,7 +456,7 @@
             // resetDevicesWithCommsErrorsToolStripMenuItem
             // 
             this.resetDevicesWithCommsErrorsToolStripMenuItem.Name = "resetDevicesWithCommsErrorsToolStripMenuItem";
-            this.resetDevicesWithCommsErrorsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F9;
+            // this.resetDevicesWithCommsErrorsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F9;
             this.resetDevicesWithCommsErrorsToolStripMenuItem.Size = new System.Drawing.Size(270, 22);
             this.resetDevicesWithCommsErrorsToolStripMenuItem.Text = "&Reset Devices With Comms Errors";
             this.resetDevicesWithCommsErrorsToolStripMenuItem.Click += new System.EventHandler(this.resetDevicesWithCommsErrorsToolStripMenuItem_Click);

@@ -5,6 +5,6 @@
     "\\src\\Deploy",
     "\\src\\DeployLib"
   ],
-  "SelectedNode": "\\src\\Deploy.sln",
+  "SelectedNode": "\\src\\DeployLib\\Device.cs",
   "PreviewInSolutionExplorer": false
 }

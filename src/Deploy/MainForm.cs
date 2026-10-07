@@ -151,6 +151,21 @@ namespace Deploy
             // Configuration
             configuration = ReadConfiguration();
 
+
+            // Create the working directory from config.ini if it does not exist yet
+            if (!Directory.Exists(WorkingDirectory))
+            {
+                try
+                {
+                    Directory.CreateDirectory(WorkingDirectory);
+                    Console.WriteLine("NOTE: Created working directory: " + WorkingDirectory);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("ERROR: Could not create working directory " + WorkingDirectory + ": " + e.Message);
+                }
+            }
+
             // Title prefix
             if (configuration.TryGetValue("title", out string titlePrefix) && titlePrefix.Length > 0)
             {
@@ -213,7 +228,7 @@ namespace Deploy
             StateGroup sg;
             sg = new StateGroup(Device.DeviceState.STATE_CONFIGURED, "Outbox", "Configured for recording: " + (ScanDevices ? "remove, scan, dispatch." : "ready to dispatch."), new int[] { 3, 0 }); // Identify: flash cyan/off
             stateGroups.Add(sg.DeviceState, sg);
-            sg = new StateGroup(Device.DeviceState.STATE_ERROR, "Error", "Problem with device communication or file download: F9 to reset; or disconnect, wait, reconnect.", new int[] { 1 }); // Error: blue
+            sg = new StateGroup(Device.DeviceState.STATE_ERROR, "Error", "Problem with device communication or file download: disconnect, wait 10 seconds, reconnect.", new int[] { 1 }); // Error: blue
             stateGroups.Add(sg.DeviceState, sg);
             sg = new StateGroup(Device.DeviceState.STATE_NONE, "Error", "(Unknown)", new int[] { 1 }); // (Error: blue) internally invalid state
             stateGroups.Add(sg.DeviceState, sg);
@@ -306,11 +321,45 @@ namespace Deploy
             }
         }
 
+        // Append one line to the deployment log (CSV, ';' separated for Excel) in the working directory
+        protected void AppendDeploymentLog(string eventName, Device device, string file)
+        {
+            try
+            {
+                string logFile = Path.Combine(WorkingDirectory, "deployment_log.csv");
+                bool isNew = !File.Exists(logFile);
+                using (StreamWriter writer = new StreamWriter(logFile, true, Encoding.UTF8))
+                {
+                    if (isNew)
+                    {
+                        writer.WriteLine("Timestamp;Event;Patient;Device;RecordingStart;RecordingEnd;File");
+                    }
+                    writer.WriteLine(string.Join(";",
+                        DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        eventName,
+                        device.SessionId,
+                        device.Id,
+                        device.StartTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                        device.StopTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                        file));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ERROR: Could not write deployment log: " + ex.Message);
+            }
+        }
+
         public void StartDownloading(Device device)
         {
             string ext = ".cwa";
             string part = ".part";
-            string basename = String.Format("{0:D10}-{1:D5}", device.SessionId, device.Id);
+
+            // File name: Patient_<patient>_Sensor_<device>_<recording start date>
+            // (falls back to today if the device has no valid start time)
+            DateTime recordingStart = (device.StartTime > DateTime.MinValue && device.StartTime < DateTime.MaxValue) ? device.StartTime : DateTime.Now;
+            string basename = $"Patient_{device.SessionId}_Sensor_{device.Id}_{recordingStart:yyyy-MM-dd}";
+
             string filename;
 
             string unique;
@@ -332,6 +381,7 @@ namespace Deploy
             Console.WriteLine("DOWNLOAD: " + device.Id + ", downloading... " + partFilename + " ...to... " + filename);
 
             device.BeginDownloading(partFilename, filename);
+            AppendDeploymentLog("returned", device, Path.GetFileName(filename));
         }
 
         // State management
@@ -499,6 +549,7 @@ namespace Deploy
                     Console.WriteLine("TRIGGER: Device CONFIGURED, remembering for checking scan: " + device.Id);
                     // Record ID to check against next scan
                     lastDeviceConfigured = device.Id;
+                    AppendDeploymentLog("issued", device, "");
                     configuredDeviceRemoved = false;
                     if (ScanDevices)
                     {
@@ -715,6 +766,16 @@ namespace Deploy
             if (lastCheckConfigure == DateTime.MinValue || (DateTime.UtcNow - lastCheckConfigure).TotalSeconds >= 1)
             {
                 lastCheckConfigure = DateTime.UtcNow;
+
+                // Device selection expires if no patient barcode follows in time
+                if (selectedDeviceId >= 0 && (DateTime.Now - selectedAt).TotalSeconds > SELECTION_TIMEOUT_SECONDS)
+                {
+                    Console.WriteLine("SELECT: Selection of device #" + selectedDeviceId + " expired.");
+                    configureControl.SetMessage("Device selection expired. Please scan the device barcode again.", ConfigureControl.MessageType.MESSAGE_TYPE_INFO);
+                    selectedDeviceId = -1;
+                    listViewDevices.SelectedItems.Clear();
+                }
+
                 if (awaitingConfiguration != null)
                 {
                     string configMessage = ((awaitingConfiguration.Within == 0) ? "[WARNING: Already after start] " : "") + awaitingConfiguration.ToString();
@@ -742,7 +803,7 @@ namespace Deploy
                     }
                 }
             }
-            
+
             if (terminateId >= 0)
             {
                 textBoxStreamWriter.RestoreConsoleOut();

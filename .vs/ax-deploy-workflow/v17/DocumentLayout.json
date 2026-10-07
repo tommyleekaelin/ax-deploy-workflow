@@ -1,18 +1,26 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\work\\D-BOOST2\\ax-deploy-workflow\\",
+  "WorkspaceRootPath": "C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Configuration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\DeployLib\\Configuration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Device.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Device.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\DeployLib\\Device.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\ConfigureControl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\MainForm.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Deploy\\MainForm.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\MainForm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Deploy\\MainForm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\ConfigureControl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Deploy\\ConfigureControl.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Configuration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\DeployLib\\Configuration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,42 +30,66 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Device.cs",
-              "DocumentMoniker": "D:\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Device.cs",
-              "RelativeDocumentMoniker": "src\\DeployLib\\Device.cs",
-              "ToolTip": "D:\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Device.cs",
-              "RelativeToolTip": "src\\DeployLib\\Device.cs",
-              "ViewState": "AgIAAIcBAAAAAAAAAAAowJQBAABlAAAAAAAAAA==",
+              "Title": "MainForm.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\MainForm.Designer.cs",
+              "RelativeDocumentMoniker": "src\\Deploy\\MainForm.Designer.cs",
+              "ToolTip": "C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\MainForm.Designer.cs",
+              "RelativeToolTip": "src\\Deploy\\MainForm.Designer.cs",
+              "ViewState": "AgIAAK0BAAAAAAAAAAAvwMcBAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-06T06:13:57.506Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Configuration.cs",
-              "DocumentMoniker": "D:\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Configuration.cs",
-              "RelativeDocumentMoniker": "src\\DeployLib\\Configuration.cs",
-              "ToolTip": "D:\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Configuration.cs",
-              "RelativeToolTip": "src\\DeployLib\\Configuration.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABkAAABcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-06T06:10:03.306Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-07T07:39:21.76Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "MainForm.cs",
+              "DocumentMoniker": "C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\MainForm.cs",
+              "RelativeDocumentMoniker": "src\\Deploy\\MainForm.cs",
+              "ToolTip": "C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\MainForm.cs",
+              "RelativeToolTip": "src\\Deploy\\MainForm.cs",
+              "ViewState": "AgIAANMAAAAAAAAAAAAiwOYAAACbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-07T06:10:34.707Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Device.cs",
+              "DocumentMoniker": "C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Device.cs",
+              "RelativeDocumentMoniker": "src\\DeployLib\\Device.cs",
+              "ToolTip": "C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Device.cs",
+              "RelativeToolTip": "src\\DeployLib\\Device.cs",
+              "ViewState": "AgIAAEEBAAAAAAAAAAAvwFwBAACHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-06T06:13:57.506Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Configuration.cs",
+              "DocumentMoniker": "C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Configuration.cs",
+              "RelativeDocumentMoniker": "src\\DeployLib\\Configuration.cs",
+              "ToolTip": "C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\DeployLib\\Configuration.cs",
+              "RelativeToolTip": "src\\DeployLib\\Configuration.cs",
+              "ViewState": "AgIAADwAAAAAAAAAAAAAABkAAABcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-06T06:10:03.306Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "ConfigureControl.cs",
-              "DocumentMoniker": "D:\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\ConfigureControl.cs",
+              "DocumentMoniker": "C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\ConfigureControl.cs",
               "RelativeDocumentMoniker": "src\\Deploy\\ConfigureControl.cs",
-              "ToolTip": "D:\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\ConfigureControl.cs",
+              "ToolTip": "C:\\Users\\kaey\\work\\D-BOOST2\\ax-deploy-workflow\\src\\Deploy\\ConfigureControl.cs",
               "RelativeToolTip": "src\\Deploy\\ConfigureControl.cs",
-              "ViewState": "AgIAAIQAAAAAAAAAAAAowKYAAAAdAAAAAAAAAA==",
+              "ViewState": "AgIAAGIAAAAAAAAAAAARwIAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-06T06:03:34.827Z"
             }
