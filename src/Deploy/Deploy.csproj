@@ -130,6 +130,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ConfigEditor\ConfigEditor.csproj">
+      <Project>{dfc24a6e-529a-468c-9d03-0af99697e579}</Project>
+      <Name>ConfigEditor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DeployLib\DeployLib.csproj">
       <Project>{ffce124b-8bf6-4455-babc-f9b11cbf8954}</Project>
       <Name>DeployLib</Name>

@@ -1,10 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\src",
+    "\\imgs",
     "\\src\\Deploy",
     "\\src\\DeployLib"
   ],
-  "SelectedNode": "\\src\\DeployLib\\Device.cs",
+  "SelectedNode": "\\imgs",
   "PreviewInSolutionExplorer": false
 }
